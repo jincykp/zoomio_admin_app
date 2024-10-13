@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "749019658197",
+    "project_id": "zoomio-admin-app",
+    "storage_bucket": "zoomio-admin-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749019658197:android:c92a3c2df58eeb9e396f5c",
+        "android_client_info": {
+          "package_name": "com.example.zoomio_adminapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPP-e1jR86uBBI7EskTUtsvflOfcMsMHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
