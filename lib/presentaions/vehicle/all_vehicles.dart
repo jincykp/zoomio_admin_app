@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
 
-class AllVehiclesScreen extends StatelessWidget {
+class AllVehiclesScreen extends StatefulWidget {
   const AllVehiclesScreen({super.key});
+
+  @override
+  State<AllVehiclesScreen> createState() => _AllVehiclesScreenState();
+}
+
+class _AllVehiclesScreenState extends State<AllVehiclesScreen> {
+  @override
+  void initState() {
+    // final vehicleProvider =
+    //     Provider.of<ImagePickerProvider>(context, listen: false);
+    // vehicleProvider.fetchVehicles();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/all_vehicles.dart';
-import 'package:zoomio_adminapp/presentaions/vehicle/vehicle_add.dart';
+import 'package:zoomio_adminapp/presentaions/vehicle/add_vehicle.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -90,6 +90,6 @@ class HomeScreen extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                const VehicleAddScreen())); // Replace with your desired route
+                VehicleAddScreen())); // Replace with your desired route
   }
 }

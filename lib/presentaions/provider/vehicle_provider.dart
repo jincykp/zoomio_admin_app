@@ -1,32 +1,82 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:zoomio_adminapp/data/model/vehicle.dart';
-// Import your Vehicle model class
+import 'package:image_picker/image_picker.dart';
 
-class VehicleProvider with ChangeNotifier {
-  List<Vehicle> _vehicles = [];
-  bool _isLoading = false;
+class VehicleProvider extends ChangeNotifier {
+  String? selectedVehicleType;
+  String? selectedBrand;
+  String? selectedFuelType;
+  DateTime? insuranceExpiryDate;
+  DateTime? pollutionExpiryDate;
+  List<String> selectedVehicleImages = [];
+  List<String> selectedDocumentImages = [];
 
-  List<Vehicle> get vehicles => _vehicles;
-  bool get isLoading => _isLoading;
+  final List<String> vehicleTypes = ['Car', 'Bike'];
+  final List<String> fuelTypes = ['Petrol', 'Diesel', 'Electric'];
 
-  // // Fetch vehicles from Firestore
-  // Future<void> fetchVehicles() async {
-  //   _isLoading = true;
-  //   notifyListeners();
+  final List<String> carBrands = ['Toyota', 'Honda', 'Ford', 'BMW', 'Nissan'];
+  final List<String> bikeBrands = [
+    'Yamaha',
+    'Kawasaki',
+    'Ducati',
+    'Suzuki',
+    'Honda'
+  ];
 
-  //   try {
-  //     QuerySnapshot snapshot =
-  //         await FirebaseFirestore.instance.collection('vehicles').get();
-  //     _vehicles = snapshot.docs
-  //         .map((doc) =>
-  //             Vehicle.fromFirestore(doc.data() as Map<String, dynamic>))
-  //         .toList();
-  //   } catch (error) {
-  //     print('Error fetching vehicles: $error');
-  //   }
+  // Select Vehicle Type
+  void setVehicleType(String? type) {
+    selectedVehicleType = type;
+    selectedBrand = null; // Reset brand when vehicle type changes
+    notifyListeners();
+  }
 
-  //   _isLoading = false;
-  //   notifyListeners();
-  // }
+  // Select Brand
+  void setBrand(String? brand) {
+    selectedBrand = brand;
+    notifyListeners();
+  }
+
+  // Select Fuel Type
+  void setFuelType(String? fuelType) {
+    selectedFuelType = fuelType;
+    notifyListeners();
+  }
+
+  // Select Vehicle Images
+  Future<void> addVehicleImages() async {
+    final picker = ImagePicker();
+    final List<XFile>? images = await picker.pickMultiImage();
+    if (images != null) {
+      selectedVehicleImages = images.map((e) => e.path).toList();
+      notifyListeners();
+    }
+  }
+
+  // Set Insurance Expiry Date
+  void setInsuranceExpiryDate(DateTime? date) {
+    insuranceExpiryDate = date;
+    notifyListeners();
+  }
+
+  // Set Pollution Expiry Date
+  void setPollutionExpiryDate(DateTime? date) {
+    pollutionExpiryDate = date;
+    notifyListeners();
+  }
+
+  // Get Brands for Selected Vehicle Type
+  List<String> getBrandsForSelectedType() {
+    return selectedVehicleType == 'Car' ? carBrands : bikeBrands;
+  }
+
+  // Clear Form
+  void clearForm() {
+    selectedVehicleType = null;
+    selectedBrand = null;
+    selectedFuelType = null;
+    selectedVehicleImages.clear();
+    selectedDocumentImages.clear();
+    insuranceExpiryDate = null;
+    pollutionExpiryDate = null;
+    notifyListeners();
+  }
 }

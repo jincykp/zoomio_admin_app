@@ -54,8 +54,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (isValid) {
         // Login successful
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Login successful")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Login successful"),
+          backgroundColor: ThemeColors.successColor,
+        ));
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else {

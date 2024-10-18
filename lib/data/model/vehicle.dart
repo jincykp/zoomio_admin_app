@@ -1,29 +1,26 @@
 class Vehicle {
   String id;
-  String brand;
-  List<String> imageUrls; // List to hold image URLs
+  String name;
+  String imageUrl;
 
-  Vehicle({
-    this.id = '',
-    required this.brand,
-    this.imageUrls = const [],
-  });
+  Vehicle({required this.id, required this.name, required this.imageUrl});
 
-  // Convert the vehicle object to a Map for Firestore
+  // Method to create a Vehicle object from Firestore data
+  factory Vehicle.fromFirestore(Map<String, dynamic> data) {
+    return Vehicle(
+      id: data['id'] ?? '', // Make sure to handle null values appropriately
+      name: data['name'] ?? '',
+      imageUrl:
+          data['imageUrl'] ?? '', // Adjust based on your Firestore structure
+    );
+  }
+
+  // Optionally, you can also add a method to convert the Vehicle back to a Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'brand': brand,
-      'imageUrls': imageUrls, // Include image URLs
+      'name': name,
+      'imageUrl': imageUrl,
     };
-  }
-
-  // Create a Vehicle object from a Map
-  factory Vehicle.fromMap(Map<String, dynamic> map, String id) {
-    return Vehicle(
-      id: id,
-      brand: map['brand'],
-      imageUrls: List<String>.from(map['imageUrls'] ?? []),
-    );
   }
 }

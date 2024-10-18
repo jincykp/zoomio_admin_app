@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ThemeColors {
-  static const Color primaryColor = Colors.orange;
+  static const Color primaryColor = Color.fromARGB(255, 219, 168, 0);
   static const Color textColor = Colors.white;
   static const Color titleColor = Colors.black;
   static const Color alertColor = Colors.red;
+  static const Color successColor = Colors.green;
 }
 
 class Textstyles {
@@ -29,5 +30,5 @@ class Textstyles {
   static const TextStyle smallTexts =
       TextStyle(fontSize: 10, color: Colors.white);
   static const TextStyle spclTexts = TextStyle(fontSize: 12);
- // static const backgroundColor successColor = Colors.green;
+  // static const backgroundColor successColor = Colors.green;
 }

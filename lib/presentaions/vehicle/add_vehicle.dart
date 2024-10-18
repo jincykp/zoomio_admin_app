@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
 import 'package:zoomio_adminapp/data/services/database.dart';
+import 'package:zoomio_adminapp/data/storage/img_storage.dart';
 
 import 'package:zoomio_adminapp/presentaions/custom_widgets/buttons.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/cus_dropdown.dart';
@@ -30,13 +31,14 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
   final insurancePolicyNumberController = TextEditingController();
   final complianceDocumentController = TextEditingController();
   final pollutionCertificateController = TextEditingController();
-  final pollutionExpiryDateController =
-      TextEditingController(); // New controller
+  final pollutionExpiryDateController = TextEditingController();
 
   DateTime? insuranceExpiryDate;
-  DateTime? pollutionExpiryDate; // New variable for pollution expiry date
+  DateTime? pollutionExpiryDate; //  for pollution expiry date
   List<String> selectedVehicleImages = [];
+  bool selectedImg = false;
   List<String> selectedDocumentImages = [];
+  bool selecetedDoc = false;
   String? selectedVehicleType;
   String? selectedFuelType;
   String? selectedBrand;
@@ -74,6 +76,7 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Vehicle Type Dropdown
                   CustomDropdownField<String>(
@@ -118,56 +121,56 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ...List.generate(
-                                selectedVehicleImages.length,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Image.file(
-                                      File(selectedVehicleImages[index]),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (selectedVehicleImages
+                                .isNotEmpty) // Check if an image is selected
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: selectAndUploadVehicleImages,
-                                  child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.grey[
-                                          300], // Light background for the icon
-                                    ),
-                                    child: const Icon(
-                                      Icons.add_a_photo,
-                                      color: Colors.black,
-                                      size: 40, // Adjust size as needed
-                                    ),
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Image.file(
+                                    File(selectedVehicleImages[
+                                        0]), // Display the only selected image
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  vehicleImages(context); // Open image picker
+                                },
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.grey[
+                                        300], // Light background for the icon
+                                  ),
+                                  child: const Icon(
+                                    Icons.add_a_photo,
+                                    color: Colors.black,
+                                    size: 40, // Adjust size as needed
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 20),
                   // Registration Number TextField
                   CustomTextField(
@@ -375,6 +378,7 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              // Display selected document images
                               ...List.generate(
                                 selectedDocumentImages.length,
                                 (index) => Padding(
@@ -387,16 +391,21 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Image.file(
-                                      File(selectedDocumentImages[index]),
+                                      File(selectedDocumentImages[
+                                          index]), // Show the selected document image
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
+
+                              // GestureDetector to select new document images
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  onTap: selectDocumentImages,
+                                  onTap: () async {
+                                    vehicleDocuments(context);
+                                  }, // Call the method to select new images
                                   child: Container(
                                     width: 80,
                                     height: 80,
@@ -487,74 +496,37 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
     return selectedVehicleType == 'Car' ? carBrands : bikeBrands;
   }
 
-// Function to pick and upload vehicle images
-  Future<void> selectAndUploadVehicleImages() async {
-    final pickedFiles = await ImagePicker().pickMultiImage();
-
-    if (pickedFiles != null) {
-      for (var file in pickedFiles) {
-        // Upload to Firebase Storage
-        String imageUrl = await uploadImage(File(file.path), file.name);
-
-        // Store the image URL in Firestore
-        await saveImageUrlToFirestore(imageUrl,
-            'vehicleImages'); // 'vehicleImages' is the collection name
-      }
-    }
-  }
-
-// Function to upload an image to Firebase Storage and get the download URL
-  Future<String> uploadImage(File file, String fileName) async {
-    try {
-      // Reference to Firebase Storage
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('vehicleImages/$fileName'); // Customize folder path
-
-      // Upload the file
-      UploadTask uploadTask = storageRef.putFile(file);
-
-      // Wait until the upload completes
-      TaskSnapshot taskSnapshot = await uploadTask;
-
-      // Get the download URL
-      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-
-      return downloadUrl;
-    } catch (e) {
-      print('Error uploading image: $e');
-      return '';
-    }
-  }
-
-// Function to save image URL to Firestore
-  Future<void> saveImageUrlToFirestore(
-      String imageUrl, String collectionName) async {
-    try {
-      await FirebaseFirestore.instance.collection(collectionName).add({
-        'imageUrl': imageUrl,
-        'uploadedAt': FieldValue
-            .serverTimestamp(), // Timestamp for when the image was uploaded
+  Future<void> vehicleImages(BuildContext context) async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      String? res =
+          await StorageService().uploadImage(pickedImage.path, context);
+      setState(() {
+        // Clear previous image selection
+        selectedVehicleImages.clear();
+        // Add the newly picked image
+        selectedVehicleImages.add(File(pickedImage.path).path);
+        // Set the flag to true since an image is selected
+        selectedImg = selectedVehicleImages.isNotEmpty;
       });
-      print('Image URL saved to Firestore.');
-    } catch (e) {
-      print('Error saving image URL to Firestore: $e');
     }
   }
 
-// Function to select and upload document images (similar to the vehicle images function)
-  Future<void> selectDocumentImages() async {
-    final pickedFiles = await ImagePicker().pickMultiImage();
-
-    if (pickedFiles != null) {
-      for (var file in pickedFiles) {
-        // Upload to Firebase Storage
-        String imageUrl = await uploadImage(File(file.path), file.name);
-
-        // Store the image URL in Firestore
-        await saveImageUrlToFirestore(imageUrl,
-            'documentImages'); // 'documentImages' is the collection name
-      }
+  Future<void> vehicleDocuments(BuildContext context) async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickMultiImage();
+    if (pickedImage != null) {
+      setState(() {
+        selectedDocumentImages.clear();
+        for (final multiImg in pickedImage) {
+          if (multiImg != null) {
+            selectedDocumentImages.add(File(multiImg.path).path);
+          }
+        }
+        selecetedDoc = selectedDocumentImages.isNotEmpty;
+      });
     }
   }
 }

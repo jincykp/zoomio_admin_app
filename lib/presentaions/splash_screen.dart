@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zoomio_adminapp/presentaions/home_screen.dart';
 import 'package:zoomio_adminapp/presentaions/sign_in.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
 
@@ -37,6 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 7));
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+        context, MaterialPageRoute(builder: (context) => HomeScreen()));
   }
 }
