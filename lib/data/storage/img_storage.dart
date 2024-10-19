@@ -4,48 +4,77 @@ import 'package:flutter/material.dart';
 
 class StorageService {
   final FirebaseStorage storage = FirebaseStorage.instance;
-
-  // Upload a single image to Firebase Storage
+  //upload the image to firebase storage
   Future<String?> uploadImage(String path, BuildContext context) async {
-    print("Starting image upload...");
+    print("image uploading");
     File file = File(path);
     try {
-      // Generate a unique file name using milliseconds since epoch
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      String fileName = DateTime.now().toString();
       Reference ref = storage.ref().child('vehicle_images/$fileName');
+//upload the file
+      UploadTask uploadtask = ref.putFile(file);
+//wait the upload complete
+      await uploadtask;
+      //get the download url
+      String downloadURL = await ref.getDownloadURL();
+      print("download url : $downloadURL");
+      return downloadURL;
+    } catch (e) {
+      print("there is an error");
+      print(e);
+      return null;
+    }
+  }
+
+  // Upload multiple images to Firebase Storage
+  // Future<List<String?>> uploadMultipleImages(
+  //     List<String> paths, BuildContext context) async {
+  //   List<String?> downloadURLs = []; // List to store the download URLs
+  //   for (String path in paths) {
+  //     String? downloadURL = await uploadImage(
+  //         path, context); // Call the single image upload function
+  //     downloadURLs.add(downloadURL); // Add the download URL to the list
+  //   }
+  //   return downloadURLs; // Return the list of download URLs
+  // }
+}
+
+class VehicleDocumentStorageService {
+  final FirebaseStorage storage = FirebaseStorage.instance;
+
+  // Upload a single vehicle document to Firebase Storage
+  Future<String?> uploadVehicleDocument(
+      String path, BuildContext context) async {
+    print("Uploading vehicle document...");
+    File file = File(path);
+    try {
+      String fileName = DateTime.now().toString();
+      Reference ref = storage.ref().child('vehicle_documents/$fileName');
 
       // Upload the file
       UploadTask uploadTask = ref.putFile(file);
-
-      // Monitor the upload task's progress
-      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-        print(
-            'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100}%');
-      });
 
       // Wait for the upload to complete
       await uploadTask;
 
       // Get the download URL
       String downloadURL = await ref.getDownloadURL();
-      print("Image uploaded successfully! Download URL: $downloadURL");
+      print("Vehicle document download URL: $downloadURL");
       return downloadURL;
     } catch (e) {
-      print("Error uploading image: $e");
+      print("Error uploading vehicle document: $e");
       return null;
     }
   }
 
-  // Upload multiple images to Firebase Storage
-  Future<List<String?>> uploadMultipleImages(
+  // Upload multiple vehicle documents to Firebase Storage
+  Future<List<String?>> uploadMultipleVehicleDocuments(
       List<String> paths, BuildContext context) async {
-    List<String?> downloadURLs = []; // List to store the download URLs
+    List<String?> downloadURLs = [];
     for (String path in paths) {
-      print("Uploading image at path: $path");
-      String? downloadURL = await uploadImage(
-          path, context); // Call the single image upload function
-      downloadURLs.add(downloadURL); // Add the download URL to the list
+      String? downloadURL = await uploadVehicleDocument(path, context);
+      downloadURLs.add(downloadURL);
     }
-    return downloadURLs; // Return the list of download URLs
+    return downloadURLs;
   }
 }

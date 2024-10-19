@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
 import 'package:zoomio_adminapp/data/services/database.dart';
 import 'package:zoomio_adminapp/data/storage/img_storage.dart';
+
 import 'package:zoomio_adminapp/presentaions/custom_widgets/buttons.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/cus_dropdown.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/vehicle_add_fields.dart';
@@ -133,8 +135,8 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                                     border: Border.all(color: Colors.grey),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Image.file(
-                                    File(selectedVehicleImages[
+                                  child: Image.network(
+                                    (selectedVehicleImages[
                                         0]), // Display the only selected image
                                     fit: BoxFit.cover,
                                   ),
@@ -371,57 +373,59 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Display selected document images
-                              ...List.generate(
-                                selectedDocumentImages.length,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Image.file(
-                                      File(selectedDocumentImages[
-                                          index]), // Show the selected document image
-                                      fit: BoxFit.cover,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Display selected document images
+                                ...List.generate(
+                                  selectedDocumentImages.length,
+                                  (index) => Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Image.network(
+                                        (selectedDocumentImages[
+                                            index]), // Show the selected document image
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
 
-                              // GestureDetector to select new document images
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    vehicleDocuments(context);
-                                  }, // Call the method to select new images
-                                  child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.grey[
-                                          300], // Light background for the icon
-                                    ),
-                                    child: const Icon(
-                                      Icons.add_a_photo,
-                                      color: Colors.black,
-                                      size: 40, // Adjust size as needed
+                                // GestureDetector to select new document images
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      vehicleDocuments(context);
+                                    }, // Call the method to select new images
+                                    child: Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.grey[
+                                            300], // Light background for the icon
+                                      ),
+                                      child: const Icon(
+                                        Icons.add_a_photo,
+                                        color: Colors.black,
+                                        size: 40, // Adjust size as needed
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -505,7 +509,7 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
         // Clear previous image selection
         selectedVehicleImages.clear();
         // Add the newly picked image
-        selectedVehicleImages.add(File(pickedImage.path).path);
+        selectedVehicleImages.add(File(res!).path);
         // Set the flag to true since an image is selected
         selectedImg = selectedVehicleImages.isNotEmpty;
       });
@@ -522,22 +526,24 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
         selectedDocumentImages.clear();
       });
 
-      // Collect paths and upload images
+      // Collect paths
+      List<String> paths = []; // Temporary list to collect paths
       for (final multiImg in pickedImages) {
-        if (multiImg != null) {
-          selectedDocumentImages.add(File(multiImg.path).path);
-        }
+        paths.add(multiImg.path); // Collecting the paths of selected images
       }
 
-      // Upload the selected images to Firebase Storage
-      List<String?> uploadUrls = await storageService.uploadMultipleImages(
-          selectedDocumentImages, context);
-      // Optional: Check upload results
+      // Use the VehicleDocumentStorageService to upload the selected images
+      final vehicleDocumentStorage = VehicleDocumentStorageService();
+      List<String?> uploadUrls = await vehicleDocumentStorage
+          .uploadMultipleVehicleDocuments(paths, context);
+
+      // Check upload results and add URLs to selectedDocumentImages
       for (String? url in uploadUrls) {
         if (url != null) {
-          print("Uploaded Image URL: $url");
+          print("Uploaded Document URL: $url");
+          selectedDocumentImages.add(url); // Store the URL instead of the path
         } else {
-          print("Upload failed for one of the images.");
+          print("Upload failed for one of the documents.");
         }
       }
 
