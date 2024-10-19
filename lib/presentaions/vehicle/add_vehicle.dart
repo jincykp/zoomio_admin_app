@@ -1,12 +1,9 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
 import 'package:zoomio_adminapp/data/services/database.dart';
 import 'package:zoomio_adminapp/data/storage/img_storage.dart';
-
 import 'package:zoomio_adminapp/presentaions/custom_widgets/buttons.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/cus_dropdown.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/vehicle_add_fields.dart';
@@ -21,6 +18,7 @@ class VehicleAddScreen extends StatefulWidget {
 }
 
 class _VehicleAddScreenState extends State<VehicleAddScreen> {
+  StorageService storageService = StorageService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final vehicleTypeController = TextEditingController();
   final registrationNumberController = TextEditingController();
@@ -516,17 +514,38 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
 
   Future<void> vehicleDocuments(BuildContext context) async {
     final imagePicker = ImagePicker();
-    final pickedImage = await imagePicker.pickMultiImage();
-    if (pickedImage != null) {
+    final pickedImages = await imagePicker.pickMultiImage();
+
+    if (pickedImages != null && pickedImages.isNotEmpty) {
+      // Clear previous selected images
       setState(() {
         selectedDocumentImages.clear();
-        for (final multiImg in pickedImage) {
-          if (multiImg != null) {
-            selectedDocumentImages.add(File(multiImg.path).path);
-          }
+      });
+
+      // Collect paths and upload images
+      for (final multiImg in pickedImages) {
+        if (multiImg != null) {
+          selectedDocumentImages.add(File(multiImg.path).path);
         }
+      }
+
+      // Upload the selected images to Firebase Storage
+      List<String?> uploadUrls = await storageService.uploadMultipleImages(
+          selectedDocumentImages, context);
+      // Optional: Check upload results
+      for (String? url in uploadUrls) {
+        if (url != null) {
+          print("Uploaded Image URL: $url");
+        } else {
+          print("Upload failed for one of the images.");
+        }
+      }
+
+      setState(() {
         selecetedDoc = selectedDocumentImages.isNotEmpty;
       });
+    } else {
+      print("No images selected.");
     }
   }
 }

@@ -65,9 +65,11 @@ class Vehicle {
       'seatingCapacity': seatingCapacity,
       'fuelType': fuelType,
       'insurancePolicyNumber': insurancePolicyNumber,
-      'insuranceExpiryDate': insuranceExpiryDate.toIso8601String(),
+      'insuranceExpiryDate':
+          Timestamp.fromDate(insuranceExpiryDate), // Use Timestamp
       'pollutionCertificateNumber': pollutionCertificateNumber,
-      'pollutionExpiryDate': pollutionExpiryDate.toIso8601String(),
+      'pollutionExpiryDate':
+          Timestamp.fromDate(pollutionExpiryDate), // Use Timestamp
       'baseFare': baseFare,
       'waitingCharge': waitingCharge,
       'perKilometerCharge': perKilometerCharge,
