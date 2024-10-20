@@ -22,7 +22,9 @@ class CustomDropdownField<T> extends StatelessWidget {
       value: value,
       decoration: InputDecoration(
         labelText: labelText,
-        border: const OutlineInputBorder(),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(19)),
+        ),
       ),
       items: items.map<DropdownMenuItem<T>>((T item) {
         return DropdownMenuItem<T>(

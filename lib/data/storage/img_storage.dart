@@ -25,18 +25,6 @@ class StorageService {
       return null;
     }
   }
-
-  // Upload multiple images to Firebase Storage
-  // Future<List<String?>> uploadMultipleImages(
-  //     List<String> paths, BuildContext context) async {
-  //   List<String?> downloadURLs = []; // List to store the download URLs
-  //   for (String path in paths) {
-  //     String? downloadURL = await uploadImage(
-  //         path, context); // Call the single image upload function
-  //     downloadURLs.add(downloadURL); // Add the download URL to the list
-  //   }
-  //   return downloadURLs; // Return the list of download URLs
-  // }
 }
 
 class VehicleDocumentStorageService {

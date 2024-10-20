@@ -37,6 +37,7 @@ class Vehicle {
 
   // From Firestore
   factory Vehicle.fromMap(Map<String, dynamic> map, String id) {
+    print('Vehicle Map: $map'); // Debugging line
     return Vehicle(
       id: id,
       vehicleType: map['vehicleType'] ?? '',
@@ -65,11 +66,9 @@ class Vehicle {
       'seatingCapacity': seatingCapacity,
       'fuelType': fuelType,
       'insurancePolicyNumber': insurancePolicyNumber,
-      'insuranceExpiryDate':
-          Timestamp.fromDate(insuranceExpiryDate), // Use Timestamp
+      'insuranceExpiryDate': Timestamp.fromDate(insuranceExpiryDate),
       'pollutionCertificateNumber': pollutionCertificateNumber,
-      'pollutionExpiryDate':
-          Timestamp.fromDate(pollutionExpiryDate), // Use Timestamp
+      'pollutionExpiryDate': Timestamp.fromDate(pollutionExpiryDate),
       'baseFare': baseFare,
       'waitingCharge': waitingCharge,
       'perKilometerCharge': perKilometerCharge,

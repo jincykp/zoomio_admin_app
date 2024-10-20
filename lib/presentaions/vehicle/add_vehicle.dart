@@ -1,15 +1,16 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
 import 'package:zoomio_adminapp/data/services/database.dart';
 import 'package:zoomio_adminapp/data/storage/img_storage.dart';
-
 import 'package:zoomio_adminapp/presentaions/custom_widgets/buttons.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/cus_dropdown.dart';
 import 'package:zoomio_adminapp/presentaions/custom_widgets/vehicle_add_fields.dart';
 import 'package:zoomio_adminapp/presentaions/home_screen.dart';
+import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
 
 class VehicleAddScreen extends StatefulWidget {
@@ -194,8 +195,17 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the seating capacity';
                       }
+                      final int? capacity = int.tryParse(value);
+                      if (capacity == null || capacity < 1 || capacity > 10) {
+                        return 'Please enter the seating capacity according to vehicle type';
+                      }
                       return null;
                     },
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Allow only digits
+                      LengthLimitingTextInputFormatter(2),
+                    ],
                   ),
                   const SizedBox(height: 20),
 
@@ -223,10 +233,19 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                     controller: insurancePolicyNumberController,
                     labelText: 'Insurance Policy Number',
                     validator: (value) {
+                      // Check if the input is empty
                       if (value == null || value.isEmpty) {
                         return 'Please provide the insurance policy number';
                       }
-                      return null;
+                      // Check for valid format (alphanumeric)
+                      if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                        return 'Insurance policy number can only contain alphanumeric characters';
+                      }
+                      // Check length (e.g., max length 15 characters)
+                      if (value.length > 15) {
+                        return 'Insurance policy number must be at most 15 characters long';
+                      }
+                      return null; // Valid input
                     },
                   ),
                   const SizedBox(height: 20),
@@ -337,6 +356,11 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                             }
                             return null;
                           },
+                          inputFormatters: [
+                            FilteringTextInputFormatter
+                                .digitsOnly, // Allow only digits
+                            LengthLimitingTextInputFormatter(3),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -351,6 +375,11 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                             }
                             return null;
                           },
+                          inputFormatters: [
+                            FilteringTextInputFormatter
+                                .digitsOnly, // Allow only digits
+                            LengthLimitingTextInputFormatter(3),
+                          ],
                         ),
                       ),
                     ],
@@ -366,6 +395,11 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                       }
                       return null;
                     },
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Allow only digits
+                      LengthLimitingTextInputFormatter(3),
+                    ],
                   ),
                   const SizedBox(height: 20),
 
@@ -463,6 +497,8 @@ class _VehicleAddScreenState extends State<VehicleAddScreen> {
                             documentImages:
                                 selectedDocumentImages, // Add uploaded document URLs
                           );
+                          Provider.of<VehicleProvider>(context, listen: false)
+                              .addVehicle(newVehicle);
 
                           await addVehicle(newVehicle);
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(13.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -85,8 +85,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Sign In",
-                  style: Textstyles.titleText,
+                  "Sign In", style: TextStyle(fontSize: 22),
+                  // style: Textstyles.titleText,
                 ),
                 SizedBox(
                   height: screenWidth * 0.04,

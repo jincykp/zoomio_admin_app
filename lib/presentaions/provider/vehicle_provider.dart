@@ -1,82 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
+import 'package:zoomio_adminapp/data/services/database.dart';
 
 class VehicleProvider extends ChangeNotifier {
-  String? selectedVehicleType;
-  String? selectedBrand;
-  String? selectedFuelType;
-  DateTime? insuranceExpiryDate;
-  DateTime? pollutionExpiryDate;
-  List<String> selectedVehicleImages = [];
-  List<String> selectedDocumentImages = [];
+  List<Vehicle> _vehicles = []; // List to hold vehicles
+  bool _isLoading = false; // Flag to track loading state
 
-  final List<String> vehicleTypes = ['Car', 'Bike'];
-  final List<String> fuelTypes = ['Petrol', 'Diesel', 'Electric'];
+  List<Vehicle> get vehicles => _vehicles; // Getter for the vehicle list
+  bool get isLoading => _isLoading; // Getter for the loading state
 
-  final List<String> carBrands = ['Toyota', 'Honda', 'Ford', 'BMW', 'Nissan'];
-  final List<String> bikeBrands = [
-    'Yamaha',
-    'Kawasaki',
-    'Ducati',
-    'Suzuki',
-    'Honda'
-  ];
-
-  // Select Vehicle Type
-  void setVehicleType(String? type) {
-    selectedVehicleType = type;
-    selectedBrand = null; // Reset brand when vehicle type changes
-    notifyListeners();
-  }
-
-  // Select Brand
-  void setBrand(String? brand) {
-    selectedBrand = brand;
-    notifyListeners();
-  }
-
-  // Select Fuel Type
-  void setFuelType(String? fuelType) {
-    selectedFuelType = fuelType;
-    notifyListeners();
-  }
-
-  // Select Vehicle Images
-  Future<void> addVehicleImages() async {
-    final picker = ImagePicker();
-    final List<XFile>? images = await picker.pickMultiImage();
-    if (images != null) {
-      selectedVehicleImages = images.map((e) => e.path).toList();
+  // Method to fetch vehicles from an external source (e.g., Firebase)
+  Future<void> fetchVehicles() async {
+    try {
+      _isLoading = true;
       notifyListeners();
+
+      _vehicles = await getVehicles();
+
+      _isLoading = false;
+      notifyListeners();
+
+      print("Fetched vehicles: $_vehicles"); // Debugging line
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error fetching vehicles: $e');
     }
   }
 
-  // Set Insurance Expiry Date
-  void setInsuranceExpiryDate(DateTime? date) {
-    insuranceExpiryDate = date;
-    notifyListeners();
+  // Method to get only cars
+// Method to get only cars
+  List<Vehicle> get cars {
+    return _vehicles
+        .where((vehicle) => vehicle.vehicleType.toLowerCase() == 'car')
+        .toList();
   }
 
-  // Set Pollution Expiry Date
-  void setPollutionExpiryDate(DateTime? date) {
-    pollutionExpiryDate = date;
-    notifyListeners();
+  // Method to get only bikes
+  List<Vehicle> get bikes {
+    return _vehicles
+        .where((vehicle) => vehicle.vehicleType.toLowerCase() == 'bike')
+        .toList();
   }
 
-  // Get Brands for Selected Vehicle Type
-  List<String> getBrandsForSelectedType() {
-    return selectedVehicleType == 'Car' ? carBrands : bikeBrands;
+  // Method to add a new vehicle
+  void addVehicle(Vehicle newVehicle) {
+    _vehicles.add(newVehicle);
+    notifyListeners(); // Notify UI about the update
   }
 
-  // Clear Form
-  void clearForm() {
-    selectedVehicleType = null;
-    selectedBrand = null;
-    selectedFuelType = null;
-    selectedVehicleImages.clear();
-    selectedDocumentImages.clear();
-    insuranceExpiryDate = null;
-    pollutionExpiryDate = null;
+  // Optional: Method to clear all vehicles (useful for testing or reset)
+  void clearVehicles() {
+    _vehicles.clear();
     notifyListeners();
   }
 }

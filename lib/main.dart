@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zoomio_adminapp/firebase_options.dart';
+import 'package:zoomio_adminapp/presentaions/provider/theme_provider.dart';
 import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
 import 'package:zoomio_adminapp/presentaions/splash_screen.dart';
 
@@ -23,13 +24,23 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<VehicleProvider>(
           create: (_) => VehicleProvider(),
         ),
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(),
+        )
         // Add other providers here if needed
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData.dark(),
-        home: const SplashScreen(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            //theme: ThemeData.light(), // Define the light theme
+            darkTheme: ThemeData.dark(), // Define the dark theme
+            themeMode: themeProvider
+                .themeMode, // Use the theme mode from ThemeProvider
+            home: const SplashScreen(),
+          );
+        },
       ),
     );
   }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zoomio_adminapp/presentaions/provider/theme_provider.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/all_vehicles.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/add_vehicle.dart';
+import 'package:zoomio_adminapp/presentaions/vehicle/default_tabbar_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // foregroundColor: ThemeColors.textColor,
         backgroundColor: ThemeColors.primaryColor,
         title: const Center(child: Text("Home Page")),
       ),
@@ -23,6 +27,7 @@ class HomeScreen extends StatelessWidget {
               {'icon': Icons.bike_scooter, 'title': 'Vehicles'},
               {'icon': Icons.attach_money, 'title': 'Revenue'},
               {'icon': Icons.emoji_transportation, 'title': 'All rides'},
+              {'icon': Icons.dark_mode, 'title': 'Theme'},
             ];
 
             return ListTile(
@@ -41,7 +46,7 @@ class HomeScreen extends StatelessWidget {
           },
           separatorBuilder: (context, index) =>
               const Divider(), // Add Divider between items
-          itemCount: 6, // Number of list items
+          itemCount: 7, // Number of list items
         ),
       ),
       // Adding the FloatingActionButton
@@ -51,7 +56,9 @@ class HomeScreen extends StatelessWidget {
           _onFabPressed(context);
         },
         backgroundColor: ThemeColors.primaryColor, // Custom color for the FAB
-        child: const Icon(Icons.add), // Icon for the FAB
+        child: const Icon(
+          Icons.add,
+        ), // Icon for the FAB
       ),
     );
   }
@@ -72,13 +79,16 @@ class HomeScreen extends StatelessWidget {
         Navigator.push(
             context,
             (MaterialPageRoute(
-                builder: (context) => const AllVehiclesScreen())));
+                builder: (context) => const DefaultTabbarScreen())));
         break;
       case 4:
         Navigator.pushNamed(context, '/revenue');
         break;
       case 5:
         Navigator.pushNamed(context, '/allRides');
+        break;
+      case 6:
+        Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
         break;
     }
   }
