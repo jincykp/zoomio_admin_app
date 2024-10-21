@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:zoomio_adminapp/data/model/vehicle_model.dart';
 import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
-import 'package:zoomio_adminapp/presentaions/vehicle/full_view_screen.dart';
+import 'package:zoomio_adminapp/presentaions/vehicle/vechicle_screens/full_view_screen.dart';
 
 class CarTabScreen extends StatefulWidget {
   const CarTabScreen({super.key}); // Make the constructor const
@@ -54,12 +53,16 @@ class _CarTabScreenState extends State<CarTabScreen> {
               itemCount: carVehicles.length,
               itemBuilder: (context, index) {
                 var vehicle = carVehicles[index];
+                if (vehicle == null) {
+                  return const SizedBox(); // If vehicle is null, return an empty widget
+                }
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const VehicleFullViewScreen(),
+                        builder: (context) =>
+                            VehicleFullViewScreen(vehicle: vehicle),
                       ),
                     );
                   },

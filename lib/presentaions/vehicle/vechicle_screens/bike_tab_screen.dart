@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
+import 'package:zoomio_adminapp/presentaions/vehicle/vechicle_screens/full_view_screen.dart';
 
 class BikeTabScreen extends StatefulWidget {
   const BikeTabScreen({super.key});
@@ -57,14 +58,14 @@ class _BikeTabScreenState extends State<BikeTabScreen> {
 
                 return GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => VehicleFullViewScreen(
-                    //         vehicle:
-                    //             vehicle), // Pass the vehicle to the full view screen
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VehicleFullViewScreen(
+                          vehicle: vehicle,
+                        ), // Pass the vehicle to the full view screen
+                      ),
+                    );
                   },
                   child: Card(
                     elevation: 10,

@@ -35,3 +35,33 @@ class CustomButtons extends StatelessWidget {
     );
   }
 }
+
+class UniqueButtons extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final Color backgroundColor;
+  final Color textColor;
+  const UniqueButtons({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+            side: const BorderSide(),
+            backgroundColor: backgroundColor,
+            padding: const EdgeInsets.symmetric(),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18))),
+        child: Text(
+          text,
+          style: TextStyle(color: textColor, fontSize: 10),
+        ));
+  }
+}

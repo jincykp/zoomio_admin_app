@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zoomio_adminapp/presentaions/provider/theme_provider.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
-import 'package:zoomio_adminapp/presentaions/vehicle/all_vehicles.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/add_vehicle.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/default_tabbar_screen.dart';
 

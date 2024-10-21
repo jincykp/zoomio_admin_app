@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zoomio_adminapp/presentaions/provider/vehicle_provider.dart';
 import 'package:zoomio_adminapp/presentaions/styles/styles.dart';
-import 'package:zoomio_adminapp/presentaions/vehicle/full_view_screen.dart';
+import 'package:zoomio_adminapp/presentaions/vehicle/vechicle_screens/full_view_screen.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/vechicle_screens/bike_tab_screen.dart';
 import 'package:zoomio_adminapp/presentaions/vehicle/vechicle_screens/car_tab_screen.dart';
 

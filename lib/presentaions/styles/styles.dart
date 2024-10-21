@@ -30,5 +30,7 @@ class Textstyles {
   static const TextStyle smallTexts =
       TextStyle(fontSize: 10, color: Colors.white);
   static const TextStyle spclTexts = TextStyle(fontSize: 12);
+  static const TextStyle dataTexts =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.bold);
   // static const backgroundColor successColor = Colors.green;
 }
